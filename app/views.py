@@ -8,6 +8,7 @@ from app.forms import LoginForm
 from werkzeug.security import check_password_hash
 from app.forms import LoginForm
 from .forms import LoginForm, UploadForm
+from flask import send_from_directory
 
 
 ###
@@ -66,6 +67,33 @@ def login():
         flash('Invalid username or password', 'danger')
 
     return render_template("login.html", form=form)
+
+@app.route('/logout')
+def logout():
+    session.pop('logged_in', None)
+    flash('You were logged out', 'success')
+    return redirect(url_for('home'))
+
+@app.route('/uploads/<filename>')
+def get_image(filename):
+    return send_from_directory(os.path.join(os.getcwd(), app.config['UPLOAD_FOLDER']), filename)
+
+@app.route('/files')
+@login_required
+def files():
+    images = get_uploaded_images()
+    return render_template('files.html', images=images)
+
+
+
+def get_uploaded_images():
+    rootdir = os.getcwd()
+    images = []
+    for subdir, dirs, files in os.walk(os.path.join(rootdir, app.config['UPLOAD_FOLDER'])):
+        for file in files:
+            images.append(file)
+    return images
+
 
 
 # user_loader callback. This callback is used to reload the user object from

@@ -1,0 +1,19 @@
+<ul class="image-grid">
+    {% for image in images %}
+        <li><img class="grid-image" src="{{ url_for('get_image', filename=image) }}" alt="{{ image }}"></li>
+    {% endfor %}
+</ul>
+
+<style>
+.image-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    grid-gap: 40px;
+}
+
+.grid-image {
+    width: 150px; 
+    height: 150px; 
+    object-fit: cover; 
+}
+</style>
